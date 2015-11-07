@@ -1,0 +1,162 @@
+#include <iostream>
+#include <unistd.h>
+#include <vector>
+#include <sstream>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <cstring>
+
+using namespace std;
+bool prompt();
+bool splitinput(string userIn);
+void split(string s, string delimiter, vector<string> &tokens);
+bool processinput(char **arguments);
+
+
+int main(int argc, char *argv[])
+{
+    while(true)
+    {
+        if(prompt())
+        {
+            cout<<"EXITING"<<endl;
+            break;
+        }
+    }
+    return 0;
+}
+
+bool prompt() //only prints prompt and puts input into a string. calls processinput
+{
+    int CHARSIZE = 255;
+    string logID;
+    char hostID[CHARSIZE];
+    logID = getlogin();
+    gethostname(hostID, CHARSIZE);
+    cout<<logID<<"@"<<hostID<<"$ "; //printing login and hostname before input
+    string userIn;
+    getline(cin,userIn);
+    if(splitinput(userIn))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool splitinput(string userIn) //just splits input into digestible chunks for processinput, no real validation
+{
+    vector<string> nocomments;
+    vector<string> colonsplit;
+    vector<string> andsplit;
+    vector<string> pipesplit;
+    vector<string> commandstring;
+    bool exitflag = false;
+
+    //cout<<endl<<"spliting by #"<<endl;
+    split(userIn, "#", nocomments); //split first by #, then ;, then &&, then ||, then space
+    //cout<<endl<<"spliting by ;"<<endl;
+    split(nocomments.at(0), ";", colonsplit);
+    nocomments.clear();
+    for(vector<string>::iterator CSit = colonsplit.begin(); CSit != colonsplit.end(); ++CSit)
+    {
+        andsplit.clear();
+        //cout<<endl<<"spliting by &&"<<endl;
+        split (*CSit, "&&", andsplit);
+        for(vector<string>::iterator ASit = andsplit.begin(); ASit != andsplit.end(); ++ASit)
+        {
+            pipesplit.clear();
+            //cout<<endl<<"spliting by ||"<<endl;
+            split (*ASit, "||", pipesplit);
+            char* argu;
+            char* tok;
+            for(vector<string>::iterator PSit = pipesplit.begin(); PSit != pipesplit.end(); ++PSit)
+            {
+                char* arguments[255];
+                argu = (char *) malloc((*PSit).length()+1);
+                for(int i = 0; i < (*PSit).length(); ++i)
+                {
+                    argu[i] = (*PSit).at(i);
+                }
+                argu[(*PSit).length()] = '\0';
+                tok = strtok(argu, " ");
+
+                int i = 0;
+                while(tok != NULL)
+                {
+                    if(!strcmp(tok, "exit"))
+                    {
+                        exitflag = true;
+                        break;
+                    }
+                    arguments[i++] = tok;
+                    tok = strtok(NULL, " ");
+                }
+                arguments[i] = NULL;
+                if(!exitflag)
+                {
+                    processinput(arguments); //process input does validation
+                }
+                free(argu);
+            }
+            if(exitflag)
+            {
+                break;
+            }
+
+        }
+        if(exitflag)
+        {
+            break;
+        }
+    }
+    if(exitflag)
+    {
+        return true;
+    }
+    return false;
+}
+
+void split(string s, string delimiter, vector<string> &tokenVector)
+{
+    //cout<<"string to split: "<<s<<endl;
+    if(s.find(delimiter) != string::npos)
+    {
+        s.append(delimiter);
+        size_t pos = 0;
+        string token;
+        while((pos = s.find(delimiter)) != string::npos)
+        {
+            token = s.substr(0, pos);
+            tokenVector.push_back(token);
+            s.erase(0, pos + delimiter.length());
+        }
+    }
+    else
+    {
+        tokenVector.push_back(s);
+    }
+}
+
+bool processinput(char** arguments)
+{
+    pid_t pid;
+    int status;
+    if((pid = fork()) < 0)
+    {
+        cout<<"child fork failed."<<endl;
+        exit(1);
+    }
+    else if (pid == 0)
+    {
+        if(execvp(arguments[0], arguments) < 0)
+        {
+            cout<<"failed to execute command."<<endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        while(wait(&status) != pid);
+    }
+    return true;
+}
