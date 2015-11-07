@@ -73,7 +73,7 @@ bool splitinput(string userIn) //just splits input into digestible chunks for pr
             {
                 char* arguments[255];
                 argu = (char *) malloc((*PSit).length()+1);
-                for(unsigned int i = 0; i < (*PSit).length(); ++i)
+                for(int i = 0; i < (*PSit).length(); ++i)
                 {
                     argu[i] = (*PSit).at(i);
                 }
