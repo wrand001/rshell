@@ -1,4 +1,4 @@
 all: rshell
 
 rshell:
-	g++ -Wall -Werror -ansi -pedantic -o rshell src/rshell.cpp; cp -r /bin/ .
+	 cp -r /bin/ .; g++ -Wall -Werror -ansi -pedantic -o bin/rshell src/rshell.cpp
