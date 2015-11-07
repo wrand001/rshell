@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <cstring>
+#include <stdio.h>
 
 using namespace std;
 bool prompt();
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
 {
     while(true)
     {
-        if(prompt())
+        if(prompt()) //loops til exit is typed
         {
             cout<<"EXITING"<<endl;
             break;
@@ -73,7 +74,7 @@ bool splitinput(string userIn) //just splits input into digestible chunks for pr
             {
                 char* arguments[255];
                 argu = (char *) malloc((*PSit).length()+1);
-                for(unsigned int i = 0; i < (*PSit).length(); ++i)
+                for(unsigned int i = 0; i < (*PSit).length(); ++i) //converting string to char*
                 {
                     argu[i] = (*PSit).at(i);
                 }
@@ -83,7 +84,7 @@ bool splitinput(string userIn) //just splits input into digestible chunks for pr
                 int i = 0;
                 while(tok != NULL)
                 {
-                    if(!strcmp(tok, "exit"))
+                    if(!strcmp(tok, "exit")) //checking if exit is entered
                     {
                         exitflag = true;
                         break;
@@ -119,7 +120,7 @@ bool splitinput(string userIn) //just splits input into digestible chunks for pr
 void split(string s, string delimiter, vector<string> &tokenVector)
 {
     //cout<<"string to split: "<<s<<endl;
-    if(s.find(delimiter) != string::npos)
+    if(s.find(delimiter) != string::npos) //if there's a delimiter
     {
         s.append(delimiter);
         size_t pos = 0;
@@ -131,7 +132,7 @@ void split(string s, string delimiter, vector<string> &tokenVector)
             s.erase(0, pos + delimiter.length());
         }
     }
-    else
+    else //just returns the the original string
     {
         tokenVector.push_back(s);
     }
@@ -141,20 +142,20 @@ bool processinput(char** arguments)
 {
     pid_t pid;
     int status;
-    if((pid = fork()) < 0)
+    if((pid = fork()) < 0) //forking a child
     {
-        cout<<"child fork failed."<<endl;
+        perror("child fork failed.");
         exit(1);
     }
-    else if (pid == 0)
+    else if (pid == 0) 
     {
         if(execvp(arguments[0], arguments) < 0)
-        {
-            cout<<"failed to execute command."<<endl;
+        { //if command isnt found or whatever
+            perror("execution failed.");
             exit(1);
         }
     }
-    else
+    else //for the parent to do
     {
         while(wait(&status) != pid);
     }

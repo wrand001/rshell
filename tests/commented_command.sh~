@@ -1,0 +1,3 @@
+#!/bin/bash
+
+(cd ..; (echo "ls -a; echo hello && echo goodbye #echo goodbye && ls || echo hi again"; echo "exit") | ./rshell; )
