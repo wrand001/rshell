@@ -1,8 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-echo hello && echo whatever ; ls #echo goodbye && ls && git status
+#echo 1
 
-#echo hello || hey blah blah && ls
+echo 1 ; #echo 2
+
+echo 1 ##echo 2
+
+echo 1#echo 2
 
 #####echo hello || hey blah blah && ls
 
@@ -13,3 +17,5 @@ echo hello; ls ##
 echo hello; ls##
 
 #ls
+
+#

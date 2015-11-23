@@ -2,9 +2,13 @@
 
 ls
 
-echo hello
+echo 1
 
 git status
+
+touch testingfile
+
+mkdir testingdir
 
 
 

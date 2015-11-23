@@ -1,10 +1,37 @@
 #!/bin/sh
 
-echo hello ; ls
-echo hello || echo goodbye
-echo hello && echo goodbye
-echo hello || ls -a && whatever || whatever -again ; echo goodbye
+echo 1 ; echo 2; echo 3; echo 4; echo 5
 
-echo -e hello || ls -a -R what && ls
+echo 1 && echo 2 && echo 3 && echo 4 && echo 5
 
-echohello||ls||&&;;;echo hello
+echo 1 || echo 2 || echo 3 || echo 4 || echo 5
+
+echo 1 || echo 2 && echo 3 || echo 4 && echo 5
+
+echo 1 && echo 2 || echo 3 && echo 4 || echo 5
+
+echo 1 || echo 2 && echo 3 ; echo 4 && echo 5 || echo 1 || echo 2 ; echo 3 || echo 4 && echo 5
+
+; echo 1
+
+echo 1 ;
+
+echo ;;;;;;;;;;;;;;; 1
+
+echo 1 ;;;;;;;;;;;;;
+
+|| echo 1
+
+echo 1 ||
+
+echo 1 ||||||||||||||| echo 2
+
+&& echo 1
+
+echo 1 &&
+
+echo 1 &&&&&&&&&&&&&&&& echo 2
+
+
+
+
